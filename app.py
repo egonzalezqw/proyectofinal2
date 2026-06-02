@@ -1,313 +1,395 @@
 import streamlit as st
+from datetime import datetime
 
-# ==========================================
+# ==================================================
+
 # CONFIGURACIÓN
-# ==========================================
+
+# ==================================================
 
 st.set_page_config(
-    page_title="🏝️ Isla Linux Essentials",
-    page_icon="🏝️",
-    layout="wide"
+page_title="🏝️ Linux Escape Island",
+page_icon="🐧",
+layout="wide"
 )
 
-# ==========================================
-# ESTADOS
-# ==========================================
+# ==================================================
 
-RETOS = [
-    "playa",
-    "variables",
-    "ifelse",
-    "forloop",
-    "permisos"
-]
+# SESSION STATE
 
-for reto in RETOS:
-    if reto not in st.session_state:
-        st.session_state[reto] = False
+# ==================================================
 
-if "letras" not in st.session_state:
-    st.session_state.letras = []
+if "nombre" not in st.session_state:
+st.session_state.nombre = ""
 
-# ==========================================
+if "nivel" not in st.session_state:
+st.session_state.nivel = 1
+
+if "vidas" not in st.session_state:
+st.session_state.vidas = 3
+
+if "coins" not in st.session_state:
+st.session_state.coins = 0
+
+if "logros" not in st.session_state:
+st.session_state.logros = []
+
+if "boss_hp" not in st.session_state:
+st.session_state.boss_hp = 100
+
+if "inicio" not in st.session_state:
+st.session_state.inicio = datetime.now()
+
+# ==================================================
+
 # FUNCIONES
-# ==========================================
 
-def agregar_letra(letra):
-    if letra not in st.session_state.letras:
-        st.session_state.letras.append(letra)
+# ==================================================
 
-def progreso():
-    completados = sum(
-        st.session_state[r] for r in RETOS
-    )
-    return completados / len(RETOS)
+def ganar_nivel():
+st.session_state.nivel += 1
+st.session_state.coins += 100
 
-# ==========================================
-# ENCABEZADO
-# ==========================================
+def perder_vida():
+st.session_state.vidas -= 1
 
-st.title("🏝️ La Isla Perdida de Linux")
+def agregar_logro(logro):
+if logro not in st.session_state.logros:
+st.session_state.logros.append(logro)
 
-st.markdown("""
-Un antiguo administrador Linux escondió un tesoro en esta isla.
+# ==================================================
 
-Para encontrarlo deberás resolver pequeños desafíos de Bash.
+# LOGIN
 
-Cada reto te entregará una letra.
+# ==================================================
 
-Cuando tengas todas las letras podrás abrir el cofre final.
+st.title("🏝️ Linux Escape Island")
+
+if st.session_state.nombre == "":
+nombre = st.text_input("👤 Ingresa tu nombre")
+
+```
+if st.button("Comenzar Aventura"):
+
+    if nombre.strip():
+        st.session_state.nombre = nombre
+        st.rerun()
+
+st.stop()
+```
+
+# ==================================================
+
+# SIDEBAR
+
+# ==================================================
+
+st.sidebar.title("🎮 Estado")
+
+st.sidebar.success(
+f"👤 {st.session_state.nombre}"
+)
+
+st.sidebar.metric(
+"❤️ Vidas",
+st.session_state.vidas
+)
+
+st.sidebar.metric(
+"🪙 Linux Coins",
+st.session_state.coins
+)
+
+st.sidebar.metric(
+"📍 Nivel",
+st.session_state.nivel
+)
+
+st.sidebar.progress(
+min(st.session_state.nivel / 6, 1.0)
+)
+
+tiempo = datetime.now() - st.session_state.inicio
+
+st.sidebar.write(
+f"⏱️ Tiempo: {tiempo.seconds // 60} min"
+)
+
+st.sidebar.subheader("🏆 Logros")
+
+if st.session_state.logros:
+for logro in st.session_state.logros:
+st.sidebar.write(logro)
+
+# ==================================================
+
+# GAME OVER
+
+# ==================================================
+
+if st.session_state.vidas <= 0:
+
+```
+st.error("💀 GAME OVER")
+
+if st.button("Reiniciar"):
+
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+
+    st.rerun()
+
+st.stop()
+```
+
+# ==================================================
+
+# HISTORIA
+
+# ==================================================
+
+st.info("""
+Hace muchos años un Administrador Linux desapareció.
+
+Antes de desaparecer ocultó un tesoro digital.
+
+Para encontrarlo deberás superar desafíos Linux.
 """)
 
-# ==========================================
-# SIDEBAR
-# ==========================================
+# ==================================================
 
-st.sidebar.title("🎒 Inventario")
+# NIVEL 1
 
-if st.session_state.letras:
-    for letra in st.session_state.letras:
-        st.sidebar.success(f"Letra: {letra}")
-else:
-    st.sidebar.info("Todavía no has encontrado letras.")
+# ==================================================
 
-st.sidebar.divider()
+if st.session_state.nivel == 1:
 
-st.sidebar.subheader("📊 Progreso")
+```
+st.header("🌴 Playa Oculta")
 
-st.sidebar.progress(progreso())
+st.markdown("""
+Encuentra el comando que muestra el directorio actual.
+""")
 
-# ==========================================
-# RETO 1
-# ==========================================
+respuesta = st.text_input("Respuesta")
 
-st.header("🌴 Playa del Bash")
+with st.expander("💡 Pista"):
+    st.write("No cambia directorios, solamente muestra dónde estás.")
 
-if not st.session_state.playa:
+if st.button("Validar"):
 
-    st.code(
-        """
-#!/bin/bash
+    if respuesta.lower().strip() == "pwd":
 
-nombre="Cisco"
+        st.success("✅ Correcto")
 
-echo $nombre
-""",
-        language="bash"
-    )
+        agregar_logro("🌴 Explorador Linux")
 
-    respuesta = st.text_input(
-        "¿Qué mostrará el script?"
-    )
+        ganar_nivel()
 
-    if st.button("Validar Reto 1"):
-
-        if respuesta.strip().lower() == "cisco":
-
-            st.success("¡Correcto!")
-
-            st.session_state.playa = True
-            agregar_letra("L")
-
-            st.rerun()
-
-        else:
-            st.error("Respuesta incorrecta")
-
-else:
-    st.success("✅ Completado")
-
-# ==========================================
-# RETO 2
-# ==========================================
-
-if st.session_state.playa:
-
-    st.header("🏕️ Campamento de Variables")
-
-    if not st.session_state.variables:
-
-        st.code(
-            """
-#!/bin/bash
-
-______="Linux"
-
-echo $curso
-""",
-            language="bash"
-        )
-
-        respuesta = st.text_input(
-            "¿Qué palabra falta?"
-        )
-
-        if st.button("Validar Reto 2"):
-
-            if respuesta.strip().lower() == "curso":
-
-                st.success("Correcto")
-
-                st.session_state.variables = True
-                agregar_letra("I")
-
-                st.rerun()
-
-            else:
-                st.error("Respuesta incorrecta")
+        st.rerun()
 
     else:
-        st.success("✅ Completado")
 
-# ==========================================
-# RETO 3
-# ==========================================
+        perder_vida()
 
-if st.session_state.variables:
+        st.error("❌ Incorrecto")
+```
 
-    st.header("🌋 Volcán del IF")
+# ==================================================
 
-    if not st.session_state.ifelse:
+# NIVEL 2
 
-        st.code(
-            """
-edad=20
+# ==================================================
 
-if [ $edad -gt 18 ]
-then
-    echo "Mayor"
-else
-    echo "Menor"
-fi
-""",
-            language="bash"
-        )
+elif st.session_state.nivel == 2:
 
-        respuesta = st.text_input(
-            "¿Cuál será la salida?"
-        )
+```
+st.header("🔐 Bosque de Permisos")
 
-        if st.button("Validar Reto 3"):
+st.code(
+    "chmod 755 respaldo.sh",
+    language="bash"
+)
 
-            if respuesta.strip().lower() == "mayor":
+respuesta = st.text_input(
+    "¿Qué permisos tiene el propietario?"
+)
 
-                st.success("Excelente")
+with st.expander("💡 Pista"):
+    st.write("755 = rwx r-x r-x")
 
-                st.session_state.ifelse = True
-                agregar_letra("N")
+if st.button("Validar"):
 
-                st.rerun()
+    if respuesta.lower().strip() == "rwx":
 
-            else:
-                st.error("Respuesta incorrecta")
+        st.success("Correcto")
+
+        agregar_logro("🔐 Maestro de Permisos")
+
+        ganar_nivel()
+
+        st.rerun()
 
     else:
-        st.success("✅ Completado")
 
-# ==========================================
-# RETO 4
-# ==========================================
+        perder_vida()
 
-if st.session_state.ifelse:
+        st.error("Incorrecto")
+```
 
-    st.header("🏰 Fortaleza FOR")
+# ==================================================
 
-    if not st.session_state.forloop:
+# NIVEL 3
 
-        st.code(
-            """
+# ==================================================
+
+elif st.session_state.nivel == 3:
+
+```
+st.header("👤 Aldea de Usuarios")
+
+respuesta = st.text_input(
+    "Comando para crear el usuario juan"
+)
+
+with st.expander("💡 Pista"):
+    st.write("Empieza por user...")
+
+if st.button("Validar"):
+
+    if respuesta.lower().strip() == "useradd juan":
+
+        st.success("Correcto")
+
+        agregar_logro("👤 Administrador de Usuarios")
+
+        ganar_nivel()
+
+        st.rerun()
+
+    else:
+
+        perder_vida()
+
+        st.error("Incorrecto")
+```
+
+# ==================================================
+
+# NIVEL 4
+
+# ==================================================
+
+elif st.session_state.nivel == 4:
+
+```
+st.header("📜 Templo Bash")
+
+st.code("""
+```
+
 for i in 1 2 3
 do
-    echo $i
+echo $i
 done
-""",
-            language="bash"
-        )
+""", language="bash")
 
-        respuesta = st.text_input(
-            "¿Cuál es el último valor mostrado?"
-        )
+```
+respuesta = st.text_input(
+    "Último valor mostrado"
+)
 
-        if st.button("Validar Reto 4"):
+if st.button("Validar"):
 
-            if respuesta.strip() == "3":
+    if respuesta.strip() == "3":
 
-                st.success("Correcto")
+        st.success("Correcto")
 
-                st.session_state.forloop = True
-                agregar_letra("U")
+        agregar_logro("📜 Guerrero Bash")
 
-                st.rerun()
+        ganar_nivel()
 
-            else:
-                st.error("Respuesta incorrecta")
+        st.rerun()
 
     else:
-        st.success("✅ Completado")
 
-# ==========================================
-# RETO 5
-# ==========================================
+        perder_vida()
 
-if st.session_state.forloop:
+        st.error("Incorrecto")
+```
 
-    st.header("⛰️ Montaña de Permisos")
+# ==================================================
 
-    if not st.session_state.permisos:
+# NIVEL 5
 
-        st.code(
-            "chmod 755 respaldo.sh",
-            language="bash"
-        )
+# ==================================================
 
-        respuesta = st.text_input(
-            "¿Qué permisos tiene el propietario?"
-        )
+elif st.session_state.nivel == 5:
 
-        if st.button("Validar Reto 5"):
+```
+st.header("🌋 Jefe Final Linux")
 
-            if respuesta.strip().lower() == "rwx":
+st.progress(
+    st.session_state.boss_hp / 100
+)
 
-                st.success("Correcto")
+st.write(
+    f"❤️ Vida del Guardián: {st.session_state.boss_hp}"
+)
 
-                st.session_state.permisos = True
-                agregar_letra("X")
+respuesta = st.text_input(
+    "¿Qué comando lista archivos?"
+)
 
-                st.rerun()
+if st.button("Atacar"):
 
-            else:
-                st.error("Respuesta incorrecta")
+    if respuesta.lower().strip() == "ls":
+
+        st.session_state.boss_hp -= 25
+
+        st.success("⚔️ Ataque exitoso")
 
     else:
-        st.success("✅ Completado")
 
-# ==========================================
+        perder_vida()
+
+        st.error("Fallaste")
+
+    if st.session_state.boss_hp <= 0:
+
+        agregar_logro("🐧 Vencedor del Guardián Linux")
+
+        ganar_nivel()
+
+        st.rerun()
+```
+
+# ==================================================
+
 # TESORO FINAL
-# ==========================================
 
-if all(st.session_state[r] for r in RETOS):
+# ==================================================
 
-    st.divider()
+elif st.session_state.nivel >= 6:
 
-    st.header("💎 Tesoro Linux")
+```
+st.balloons()
 
-    st.info(
-        "Utiliza las letras obtenidas para formar la palabra secreta."
-    )
+st.success(
+    "💎 ¡HAS ENCONTRADO EL TESORO LINUX!"
+)
 
-    palabra = st.text_input(
-        "Palabra secreta"
-    )
+st.markdown("""
+```
 
-    if st.button("Abrir Cofre"):
+# 🏆 Misión Completada
 
-        if palabra.strip().upper() == "LINUX":
+Has demostrado conocimientos de:
 
-            st.balloons()
-
-            st.success(
-                "🏆 ¡FELICIDADES! Has encontrado el Tesoro Linux."
-            )
-
-        else:
-            st.error("Palabra incorrecta.")
+* Bash
+* Usuarios
+* Permisos
+* Bucles
+* Comandos Linux
+* Administración básica
+  """)
