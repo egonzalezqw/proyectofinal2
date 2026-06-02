@@ -1,31 +1,43 @@
 import streamlit as st
 
+# ---------------------------------
+
+# CONFIGURACIÓN
+
+# ---------------------------------
+
 st.set_page_config(
-page_title="🏝️ Linux Survival Challenge",
+page_title="Linux Survival Challenge",
 page_icon="🐧"
 )
 
-# ----------------------------
+# ---------------------------------
 
-# ESTADO
+# VARIABLES DE SESIÓN
 
-# ----------------------------
+# ---------------------------------
 
 if "nivel" not in st.session_state:
-st.session_state.nivel = 1
+st.session_state["nivel"] = 1
 
 if "nombre" not in st.session_state:
-st.session_state.nombre = ""
+st.session_state["nombre"] = ""
 
-# ----------------------------
+# ---------------------------------
+
+# TÍTULO
+
+# ---------------------------------
+
+st.title("🐧 Linux Survival Challenge")
+
+# ---------------------------------
 
 # LOGIN
 
-# ----------------------------
+# ---------------------------------
 
-st.title("🏝️ Linux Survival Challenge")
-
-if st.session_state.nombre == "":
+if st.session_state["nombre"] == "":
 
 ```
 nombre = st.text_input(
@@ -34,146 +46,154 @@ nombre = st.text_input(
 
 if st.button("Comenzar"):
 
-    if nombre.strip():
-        st.session_state.nombre = nombre
+    if nombre.strip() != "":
+        st.session_state["nombre"] = nombre
         st.rerun()
 
 st.stop()
 ```
 
+# ---------------------------------
+
+# BIENVENIDA
+
+# ---------------------------------
+
 st.success(
-f"Bienvenido {st.session_state.nombre}"
+f"Bienvenido {st.session_state['nombre']}"
 )
 
-st.progress(st.session_state.nivel / 6)
+st.progress(
+st.session_state["nivel"] / 5
+)
 
-# ----------------------------
+# ---------------------------------
 
 # NIVEL 1
 
-# ----------------------------
+# ---------------------------------
 
-if st.session_state.nivel == 1:
+if st.session_state["nivel"] == 1:
 
 ```
-st.header("🌴 Misión 1 - Primer Script")
+st.header("Nivel 1 - Script Bash")
 
-st.markdown("""
-Cree un archivo llamado:
-
-bienvenida.sh
+st.write("""
+Cree un script llamado bienvenida.sh
 
 El script debe mostrar:
 
 Bienvenido al Linux Challenge
-
-Ejecútelo y escriba el resultado.
 """)
 
 respuesta = st.text_input(
-    "Resultado:"
+    "¿Qué mostró el script?"
 )
 
-if st.button("Validar Misión 1"):
+if st.button("Validar Nivel 1"):
 
     if respuesta == "Bienvenido al Linux Challenge":
 
-        st.success("Nivel completado")
+        st.success("Correcto")
 
-        st.session_state.nivel = 2
+        st.session_state["nivel"] = 2
+
         st.rerun()
 
     else:
-        st.error("Incorrecto")
+
+        st.error("Respuesta incorrecta")
 ```
 
-# ----------------------------
+# ---------------------------------
 
 # NIVEL 2
 
-# ----------------------------
+# ---------------------------------
 
-elif st.session_state.nivel == 2:
+elif st.session_state["nivel"] == 2:
 
 ```
-st.header("🏕️ Misión 2 - Variables")
+st.header("Nivel 2 - Variables")
 
-st.markdown("""
-Cree un script llamado:
+st.write("""
+Cree un script llamado usuario.sh
 
-usuario.sh
-
-Debe contener una variable
-llamada nombre.
-
-Luego mostrarla utilizando echo.
+Debe crear una variable llamada nombre
+y mostrarla con echo.
 """)
 
 respuesta = st.text_input(
     "¿Qué valor mostró?"
 )
 
-if st.button("Validar Misión 2"):
+if st.button("Validar Nivel 2"):
 
     if respuesta.strip() != "":
 
-        st.success("Nivel completado")
+        st.success("Correcto")
 
-        st.session_state.nivel = 3
+        st.session_state["nivel"] = 3
+
         st.rerun()
+
+    else:
+
+        st.error("Ingrese una respuesta")
 ```
 
-# ----------------------------
+# ---------------------------------
 
 # NIVEL 3
 
-# ----------------------------
+# ---------------------------------
 
-elif st.session_state.nivel == 3:
+elif st.session_state["nivel"] == 3:
 
 ```
-st.header("⛰️ Misión 3 - Permisos")
+st.header("Nivel 3 - Permisos")
 
-st.markdown("""
+st.write("""
 Asigne permisos de ejecución
-al script bienvenida.sh
-
-Utilice chmod.
+a bienvenida.sh usando chmod.
 """)
 
 respuesta = st.text_input(
     "¿Qué permisos tiene el propietario?"
 )
 
-if st.button("Validar Misión 3"):
+if st.button("Validar Nivel 3"):
 
     if respuesta.lower() == "rwx":
 
         st.success("Correcto")
 
-        st.session_state.nivel = 4
+        st.session_state["nivel"] = 4
+
         st.rerun()
+
+    else:
+
+        st.error("Incorrecto")
 ```
 
-# ----------------------------
+# ---------------------------------
 
 # NIVEL 4
 
-# ----------------------------
+# ---------------------------------
 
-elif st.session_state.nivel == 4:
+elif st.session_state["nivel"] == 4:
 
 ```
-st.header("🌋 Misión 4 - IF")
+st.header("Nivel 4 - IF")
 
-st.markdown("""
-Cree un script:
-
-edad.sh
+st.write("""
+Cree un script con:
 
 edad=20
 
-Si edad es mayor a 18
+Si la edad es mayor a 18
 debe mostrar:
 
 Mayor
@@ -183,33 +203,34 @@ respuesta = st.text_input(
     "¿Qué mostró el script?"
 )
 
-if st.button("Validar Misión 4"):
+if st.button("Validar Nivel 4"):
 
     if respuesta.lower() == "mayor":
 
         st.success("Correcto")
 
-        st.session_state.nivel = 5
+        st.session_state["nivel"] = 5
+
         st.rerun()
+
+    else:
+
+        st.error("Incorrecto")
 ```
 
-# ----------------------------
+# ---------------------------------
 
 # NIVEL 5
 
-# ----------------------------
+# ---------------------------------
 
-elif st.session_state.nivel == 5:
+elif st.session_state["nivel"] == 5:
 
 ```
-st.header("🏰 Misión 5 - FOR")
+st.header("Nivel 5 - FOR")
 
-st.markdown("""
-Cree un script utilizando:
-
-for
-
-Debe mostrar:
+st.write("""
+Cree un script que muestre:
 
 1
 2
@@ -217,42 +238,20 @@ Debe mostrar:
 """)
 
 respuesta = st.text_input(
-    "¿Cuál fue el último valor?"
+    "¿Cuál fue el último número mostrado?"
 )
 
-if st.button("Validar Misión 5"):
+if st.button("Finalizar"):
 
     if respuesta == "3":
 
-        st.success("Correcto")
+        st.balloons()
 
-        st.session_state.nivel = 6
-        st.rerun()
-```
+        st.success(
+            "🏆 Proyecto Final Completado"
+        )
 
-# ----------------------------
+    else:
 
-# TESORO FINAL
-
-# ----------------------------
-
-elif st.session_state.nivel == 6:
-
-```
-st.balloons()
-
-st.success(
-    "🏆 Proyecto Final Completado"
-)
-
-st.markdown("""
-Has demostrado conocimientos de:
-
-- Bash
-- Variables
-- Permisos
-- IF
-- FOR
-- Ejecución de scripts
-""")
+        st.error("Respuesta incorrecta")
 ```
