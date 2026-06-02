@@ -1,3 +1,12 @@
+import streamlit as st
+
+st.set_page_config(
+    page_title="Linux Survival Challenge",
+    page_icon="🐧"
+)
+
+st.title("🐧 Linux Survival Challenge")
+
 st.header("🏝️ Misión 1")
 
 st.code("""
@@ -14,14 +23,7 @@ respuesta = st.text_input(
 
 if st.button("Validar"):
 
-    if respuesta.strip().lower() == "curso":
-
-        st.success("Correcto")
-
-        st.session_state.nivel += 1
-
-        st.rerun()
-
+    if respuesta.lower().strip() == "curso":
+        st.success("✅ Correcto")
     else:
-
-        st.error("Incorrecto")
+        st.error("❌ Incorrecto")
