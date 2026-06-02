@@ -1,315 +1,258 @@
 import streamlit as st
-from datetime import datetime
-
-# =====================================================
-# CONFIGURACIÓN
-# =====================================================
 
 st.set_page_config(
-    page_title="🐧 Linux Escape Room",
-    page_icon="🐧",
-    layout="wide"
+page_title="🏝️ Linux Survival Challenge",
+page_icon="🐧"
 )
 
-# =====================================================
-# SESSION STATE
-# =====================================================
+# ----------------------------
 
-if "nombre" not in st.session_state:
-    st.session_state["nombre"] = ""
+# ESTADO
+
+# ----------------------------
 
 if "nivel" not in st.session_state:
-    st.session_state["nivel"] = 1
+st.session_state.nivel = 1
 
-if "vidas" not in st.session_state:
-    st.session_state["vidas"] = 3
+if "nombre" not in st.session_state:
+st.session_state.nombre = ""
 
-if "coins" not in st.session_state:
-    st.session_state["coins"] = 0
+# ----------------------------
 
-if "inicio" not in st.session_state:
-    st.session_state["inicio"] = datetime.now()
-
-# =====================================================
-# FUNCIONES
-# =====================================================
-
-def nivel_completado():
-    st.session_state["nivel"] += 1
-    st.session_state["coins"] += 100
-
-def perder_vida():
-    st.session_state["vidas"] -= 1
-
-# =====================================================
 # LOGIN
-# =====================================================
 
-st.title("🏝️ Linux Escape Room")
+# ----------------------------
 
-if st.session_state["nombre"] == "":
+st.title("🏝️ Linux Survival Challenge")
 
-    nombre = st.text_input(
-        "👤 Ingrese su nombre"
-    )
+if st.session_state.nombre == "":
 
-    if st.button("Comenzar"):
-
-        if nombre.strip():
-            st.session_state["nombre"] = nombre
-            st.rerun()
-
-    st.stop()
-
-# =====================================================
-# SIDEBAR
-# =====================================================
-
-st.sidebar.header("🎮 Estado")
-
-st.sidebar.write(
-    f"👤 {st.session_state['nombre']}"
+```
+nombre = st.text_input(
+    "Ingrese su nombre:"
 )
 
-st.sidebar.metric(
-    "❤️ Vidas",
-    st.session_state["vidas"]
-)
+if st.button("Comenzar"):
 
-st.sidebar.metric(
-    "🪙 Linux Coins",
-    st.session_state["coins"]
-)
-
-st.sidebar.metric(
-    "📍 Nivel",
-    st.session_state["nivel"]
-)
-
-st.sidebar.progress(
-    min(st.session_state["nivel"] / 6, 1.0)
-)
-
-tiempo = datetime.now() - st.session_state["inicio"]
-
-st.sidebar.write(
-    f"⏱️ Tiempo: {tiempo.seconds // 60} min"
-)
-
-# =====================================================
-# GAME OVER
-# =====================================================
-
-if st.session_state["vidas"] <= 0:
-
-    st.error("💀 GAME OVER")
-
-    if st.button("Reiniciar Juego"):
-
-        for key in list(st.session_state.keys()):
-            del st.session_state[key]
-
+    if nombre.strip():
+        st.session_state.nombre = nombre
         st.rerun()
 
-    st.stop()
+st.stop()
+```
 
-# =====================================================
-# HISTORIA
-# =====================================================
+st.success(
+f"Bienvenido {st.session_state.nombre}"
+)
 
-st.info("""
-Un antiguo administrador Linux escondió un tesoro digital.
+st.progress(st.session_state.nivel / 6)
 
-Supera los retos para encontrarlo.
+# ----------------------------
+
+# NIVEL 1
+
+# ----------------------------
+
+if st.session_state.nivel == 1:
+
+```
+st.header("🌴 Misión 1 - Primer Script")
+
+st.markdown("""
+Cree un archivo llamado:
+
+bienvenida.sh
+
+El script debe mostrar:
+
+Bienvenido al Linux Challenge
+
+Ejecútelo y escriba el resultado.
 """)
 
-# =====================================================
-# NIVEL 1
-# =====================================================
+respuesta = st.text_input(
+    "Resultado:"
+)
 
-if st.session_state["nivel"] == 1:
+if st.button("Validar Misión 1"):
 
-    st.header("🌴 Nivel 1 - Navegación")
+    if respuesta == "Bienvenido al Linux Challenge":
 
-    st.write(
-        "¿Qué comando muestra el directorio actual?"
-    )
+        st.success("Nivel completado")
 
-    respuesta = st.text_input(
-        "Respuesta"
-    )
+        st.session_state.nivel = 2
+        st.rerun()
 
-    if st.button("Validar Nivel 1"):
+    else:
+        st.error("Incorrecto")
+```
 
-        if respuesta.strip().lower() == "pwd":
+# ----------------------------
 
-            st.success("✅ Correcto")
-
-            nivel_completado()
-
-            st.rerun()
-
-        else:
-
-            perder_vida()
-
-            st.error("❌ Incorrecto")
-
-# =====================================================
 # NIVEL 2
-# =====================================================
 
-elif st.session_state["nivel"] == 2:
+# ----------------------------
 
-    st.header("🔐 Nivel 2 - Permisos")
+elif st.session_state.nivel == 2:
 
-    st.code(
-        "chmod 755 archivo.sh",
-        language="bash"
-    )
+```
+st.header("🏕️ Misión 2 - Variables")
 
-    respuesta = st.text_input(
-        "¿Qué permisos tiene el propietario?"
-    )
+st.markdown("""
+Cree un script llamado:
 
-    if st.button("Validar Nivel 2"):
+usuario.sh
 
-        if respuesta.strip().lower() == "rwx":
+Debe contener una variable
+llamada nombre.
 
-            st.success("✅ Correcto")
+Luego mostrarla utilizando echo.
+""")
 
-            nivel_completado()
+respuesta = st.text_input(
+    "¿Qué valor mostró?"
+)
 
-            st.rerun()
+if st.button("Validar Misión 2"):
 
-        else:
+    if respuesta.strip() != "":
 
-            perder_vida()
+        st.success("Nivel completado")
 
-            st.error("❌ Incorrecto")
+        st.session_state.nivel = 3
+        st.rerun()
+```
 
-# =====================================================
+# ----------------------------
+
 # NIVEL 3
-# =====================================================
 
-elif st.session_state["nivel"] == 3:
+# ----------------------------
 
-    st.header("👤 Nivel 3 - Usuarios")
+elif st.session_state.nivel == 3:
 
-    respuesta = st.text_input(
-        "Comando para crear el usuario juan"
-    )
+```
+st.header("⛰️ Misión 3 - Permisos")
 
-    if st.button("Validar Nivel 3"):
+st.markdown("""
+Asigne permisos de ejecución
+al script bienvenida.sh
 
-        if respuesta.strip().lower() == "useradd juan":
+Utilice chmod.
+""")
 
-            st.success("✅ Correcto")
+respuesta = st.text_input(
+    "¿Qué permisos tiene el propietario?"
+)
 
-            nivel_completado()
+if st.button("Validar Misión 3"):
 
-            st.rerun()
+    if respuesta.lower() == "rwx":
 
-        else:
+        st.success("Correcto")
 
-            perder_vida()
+        st.session_state.nivel = 4
+        st.rerun()
+```
 
-            st.error("❌ Incorrecto")
+# ----------------------------
 
-# =====================================================
 # NIVEL 4
-# =====================================================
 
-elif st.session_state["nivel"] == 4:
+# ----------------------------
 
-    st.header("📜 Nivel 4 - Bash")
+elif st.session_state.nivel == 4:
 
-    st.code(
-        """
-for i in 1 2 3
-do
-    echo $i
-done
-""",
-        language="bash"
-    )
+```
+st.header("🌋 Misión 4 - IF")
 
-    respuesta = st.text_input(
-        "¿Cuál es el último valor mostrado?"
-    )
+st.markdown("""
+Cree un script:
 
-    if st.button("Validar Nivel 4"):
+edad.sh
 
-        if respuesta.strip() == "3":
+edad=20
 
-            st.success("✅ Correcto")
+Si edad es mayor a 18
+debe mostrar:
 
-            nivel_completado()
+Mayor
+""")
 
-            st.rerun()
+respuesta = st.text_input(
+    "¿Qué mostró el script?"
+)
 
-        else:
+if st.button("Validar Misión 4"):
 
-            perder_vida()
+    if respuesta.lower() == "mayor":
 
-            st.error("❌ Incorrecto")
+        st.success("Correcto")
 
-# =====================================================
+        st.session_state.nivel = 5
+        st.rerun()
+```
+
+# ----------------------------
+
 # NIVEL 5
-# =====================================================
 
-elif st.session_state["nivel"] == 5:
+# ----------------------------
 
-    st.header("🤖 Nivel 5 - Script Bash")
+elif st.session_state.nivel == 5:
 
-    st.code(
-        """
-#!/bin/bash
-echo "Linux Master"
-""",
-        language="bash"
-    )
+```
+st.header("🏰 Misión 5 - FOR")
 
-    respuesta = st.text_input(
-        "¿Qué mostrará el script?"
-    )
+st.markdown("""
+Cree un script utilizando:
 
-    if st.button("Validar Nivel 5"):
+for
 
-        if respuesta.strip() == "Linux Master":
+Debe mostrar:
 
-            st.success("✅ Correcto")
+1
+2
+3
+""")
 
-            nivel_completado()
+respuesta = st.text_input(
+    "¿Cuál fue el último valor?"
+)
 
-            st.rerun()
+if st.button("Validar Misión 5"):
 
-        else:
+    if respuesta == "3":
 
-            perder_vida()
+        st.success("Correcto")
 
-            st.error("❌ Incorrecto")
+        st.session_state.nivel = 6
+        st.rerun()
+```
 
-# =====================================================
-# FINAL
-# =====================================================
+# ----------------------------
 
-elif st.session_state["nivel"] >= 6:
+# TESORO FINAL
 
-    st.balloons()
+# ----------------------------
 
-    st.success(
-        "🏆 ¡FELICIDADES! Has completado Linux Escape Room"
-    )
+elif st.session_state.nivel == 6:
 
-    st.write(
-        f"Jugador: {st.session_state['nombre']}"
-    )
+```
+st.balloons()
 
-    st.write(
-        f"Monedas obtenidas: {st.session_state['coins']}"
-    )
+st.success(
+    "🏆 Proyecto Final Completado"
+)
 
-    st.write(
-        f"Vidas restantes: {st.session_state['vidas']}"
-    )
+st.markdown("""
+Has demostrado conocimientos de:
+
+- Bash
+- Variables
+- Permisos
+- IF
+- FOR
+- Ejecución de scripts
+""")
+```
