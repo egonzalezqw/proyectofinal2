@@ -1,395 +1,315 @@
 import streamlit as st
 from datetime import datetime
 
-# ==================================================
-
+# =====================================================
 # CONFIGURACIÓN
-
-# ==================================================
+# =====================================================
 
 st.set_page_config(
-page_title="🏝️ Linux Escape Island",
-page_icon="🐧",
-layout="wide"
+    page_title="🐧 Linux Escape Room",
+    page_icon="🐧",
+    layout="wide"
 )
 
-# ==================================================
-
+# =====================================================
 # SESSION STATE
-
-# ==================================================
+# =====================================================
 
 if "nombre" not in st.session_state:
-st.session_state.nombre = ""
+    st.session_state["nombre"] = ""
 
 if "nivel" not in st.session_state:
-st.session_state.nivel = 1
+    st.session_state["nivel"] = 1
 
 if "vidas" not in st.session_state:
-st.session_state.vidas = 3
+    st.session_state["vidas"] = 3
 
 if "coins" not in st.session_state:
-st.session_state.coins = 0
-
-if "logros" not in st.session_state:
-st.session_state.logros = []
-
-if "boss_hp" not in st.session_state:
-st.session_state.boss_hp = 100
+    st.session_state["coins"] = 0
 
 if "inicio" not in st.session_state:
-st.session_state.inicio = datetime.now()
+    st.session_state["inicio"] = datetime.now()
 
-# ==================================================
-
+# =====================================================
 # FUNCIONES
+# =====================================================
 
-# ==================================================
-
-def ganar_nivel():
-st.session_state.nivel += 1
-st.session_state.coins += 100
+def nivel_completado():
+    st.session_state["nivel"] += 1
+    st.session_state["coins"] += 100
 
 def perder_vida():
-st.session_state.vidas -= 1
+    st.session_state["vidas"] -= 1
 
-def agregar_logro(logro):
-if logro not in st.session_state.logros:
-st.session_state.logros.append(logro)
-
-# ==================================================
-
+# =====================================================
 # LOGIN
+# =====================================================
 
-# ==================================================
+st.title("🏝️ Linux Escape Room")
 
-st.title("🏝️ Linux Escape Island")
+if st.session_state["nombre"] == "":
 
-if st.session_state.nombre == "":
-nombre = st.text_input("👤 Ingresa tu nombre")
+    nombre = st.text_input(
+        "👤 Ingrese su nombre"
+    )
 
-```
-if st.button("Comenzar Aventura"):
+    if st.button("Comenzar"):
 
-    if nombre.strip():
-        st.session_state.nombre = nombre
-        st.rerun()
+        if nombre.strip():
+            st.session_state["nombre"] = nombre
+            st.rerun()
 
-st.stop()
-```
+    st.stop()
 
-# ==================================================
-
+# =====================================================
 # SIDEBAR
+# =====================================================
 
-# ==================================================
+st.sidebar.header("🎮 Estado")
 
-st.sidebar.title("🎮 Estado")
-
-st.sidebar.success(
-f"👤 {st.session_state.nombre}"
+st.sidebar.write(
+    f"👤 {st.session_state['nombre']}"
 )
 
 st.sidebar.metric(
-"❤️ Vidas",
-st.session_state.vidas
+    "❤️ Vidas",
+    st.session_state["vidas"]
 )
 
 st.sidebar.metric(
-"🪙 Linux Coins",
-st.session_state.coins
+    "🪙 Linux Coins",
+    st.session_state["coins"]
 )
 
 st.sidebar.metric(
-"📍 Nivel",
-st.session_state.nivel
+    "📍 Nivel",
+    st.session_state["nivel"]
 )
 
 st.sidebar.progress(
-min(st.session_state.nivel / 6, 1.0)
+    min(st.session_state["nivel"] / 6, 1.0)
 )
 
-tiempo = datetime.now() - st.session_state.inicio
+tiempo = datetime.now() - st.session_state["inicio"]
 
 st.sidebar.write(
-f"⏱️ Tiempo: {tiempo.seconds // 60} min"
+    f"⏱️ Tiempo: {tiempo.seconds // 60} min"
 )
 
-st.sidebar.subheader("🏆 Logros")
-
-if st.session_state.logros:
-for logro in st.session_state.logros:
-st.sidebar.write(logro)
-
-# ==================================================
-
+# =====================================================
 # GAME OVER
+# =====================================================
 
-# ==================================================
+if st.session_state["vidas"] <= 0:
 
-if st.session_state.vidas <= 0:
+    st.error("💀 GAME OVER")
 
-```
-st.error("💀 GAME OVER")
+    if st.button("Reiniciar Juego"):
 
-if st.button("Reiniciar"):
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
 
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
+        st.rerun()
 
-    st.rerun()
+    st.stop()
 
-st.stop()
-```
-
-# ==================================================
-
+# =====================================================
 # HISTORIA
-
-# ==================================================
+# =====================================================
 
 st.info("""
-Hace muchos años un Administrador Linux desapareció.
+Un antiguo administrador Linux escondió un tesoro digital.
 
-Antes de desaparecer ocultó un tesoro digital.
-
-Para encontrarlo deberás superar desafíos Linux.
+Supera los retos para encontrarlo.
 """)
 
-# ==================================================
-
+# =====================================================
 # NIVEL 1
+# =====================================================
 
-# ==================================================
+if st.session_state["nivel"] == 1:
 
-if st.session_state.nivel == 1:
+    st.header("🌴 Nivel 1 - Navegación")
 
-```
-st.header("🌴 Playa Oculta")
+    st.write(
+        "¿Qué comando muestra el directorio actual?"
+    )
 
-st.markdown("""
-Encuentra el comando que muestra el directorio actual.
-""")
+    respuesta = st.text_input(
+        "Respuesta"
+    )
 
-respuesta = st.text_input("Respuesta")
+    if st.button("Validar Nivel 1"):
 
-with st.expander("💡 Pista"):
-    st.write("No cambia directorios, solamente muestra dónde estás.")
+        if respuesta.strip().lower() == "pwd":
 
-if st.button("Validar"):
+            st.success("✅ Correcto")
 
-    if respuesta.lower().strip() == "pwd":
+            nivel_completado()
 
-        st.success("✅ Correcto")
+            st.rerun()
 
-        agregar_logro("🌴 Explorador Linux")
+        else:
 
-        ganar_nivel()
+            perder_vida()
 
-        st.rerun()
+            st.error("❌ Incorrecto")
 
-    else:
-
-        perder_vida()
-
-        st.error("❌ Incorrecto")
-```
-
-# ==================================================
-
+# =====================================================
 # NIVEL 2
+# =====================================================
 
-# ==================================================
+elif st.session_state["nivel"] == 2:
 
-elif st.session_state.nivel == 2:
+    st.header("🔐 Nivel 2 - Permisos")
 
-```
-st.header("🔐 Bosque de Permisos")
+    st.code(
+        "chmod 755 archivo.sh",
+        language="bash"
+    )
 
-st.code(
-    "chmod 755 respaldo.sh",
-    language="bash"
-)
+    respuesta = st.text_input(
+        "¿Qué permisos tiene el propietario?"
+    )
 
-respuesta = st.text_input(
-    "¿Qué permisos tiene el propietario?"
-)
+    if st.button("Validar Nivel 2"):
 
-with st.expander("💡 Pista"):
-    st.write("755 = rwx r-x r-x")
+        if respuesta.strip().lower() == "rwx":
 
-if st.button("Validar"):
+            st.success("✅ Correcto")
 
-    if respuesta.lower().strip() == "rwx":
+            nivel_completado()
 
-        st.success("Correcto")
+            st.rerun()
 
-        agregar_logro("🔐 Maestro de Permisos")
+        else:
 
-        ganar_nivel()
+            perder_vida()
 
-        st.rerun()
+            st.error("❌ Incorrecto")
 
-    else:
-
-        perder_vida()
-
-        st.error("Incorrecto")
-```
-
-# ==================================================
-
+# =====================================================
 # NIVEL 3
+# =====================================================
 
-# ==================================================
+elif st.session_state["nivel"] == 3:
 
-elif st.session_state.nivel == 3:
+    st.header("👤 Nivel 3 - Usuarios")
 
-```
-st.header("👤 Aldea de Usuarios")
+    respuesta = st.text_input(
+        "Comando para crear el usuario juan"
+    )
 
-respuesta = st.text_input(
-    "Comando para crear el usuario juan"
-)
+    if st.button("Validar Nivel 3"):
 
-with st.expander("💡 Pista"):
-    st.write("Empieza por user...")
+        if respuesta.strip().lower() == "useradd juan":
 
-if st.button("Validar"):
+            st.success("✅ Correcto")
 
-    if respuesta.lower().strip() == "useradd juan":
+            nivel_completado()
 
-        st.success("Correcto")
+            st.rerun()
 
-        agregar_logro("👤 Administrador de Usuarios")
+        else:
 
-        ganar_nivel()
+            perder_vida()
 
-        st.rerun()
+            st.error("❌ Incorrecto")
 
-    else:
-
-        perder_vida()
-
-        st.error("Incorrecto")
-```
-
-# ==================================================
-
+# =====================================================
 # NIVEL 4
+# =====================================================
 
-# ==================================================
+elif st.session_state["nivel"] == 4:
 
-elif st.session_state.nivel == 4:
+    st.header("📜 Nivel 4 - Bash")
 
-```
-st.header("📜 Templo Bash")
-
-st.code("""
-```
-
+    st.code(
+        """
 for i in 1 2 3
 do
-echo $i
+    echo $i
 done
-""", language="bash")
+""",
+        language="bash"
+    )
 
-```
-respuesta = st.text_input(
-    "Último valor mostrado"
-)
+    respuesta = st.text_input(
+        "¿Cuál es el último valor mostrado?"
+    )
 
-if st.button("Validar"):
+    if st.button("Validar Nivel 4"):
 
-    if respuesta.strip() == "3":
+        if respuesta.strip() == "3":
 
-        st.success("Correcto")
+            st.success("✅ Correcto")
 
-        agregar_logro("📜 Guerrero Bash")
+            nivel_completado()
 
-        ganar_nivel()
+            st.rerun()
 
-        st.rerun()
+        else:
 
-    else:
+            perder_vida()
 
-        perder_vida()
+            st.error("❌ Incorrecto")
 
-        st.error("Incorrecto")
-```
-
-# ==================================================
-
+# =====================================================
 # NIVEL 5
+# =====================================================
 
-# ==================================================
+elif st.session_state["nivel"] == 5:
 
-elif st.session_state.nivel == 5:
+    st.header("🤖 Nivel 5 - Script Bash")
 
-```
-st.header("🌋 Jefe Final Linux")
+    st.code(
+        """
+#!/bin/bash
+echo "Linux Master"
+""",
+        language="bash"
+    )
 
-st.progress(
-    st.session_state.boss_hp / 100
-)
+    respuesta = st.text_input(
+        "¿Qué mostrará el script?"
+    )
 
-st.write(
-    f"❤️ Vida del Guardián: {st.session_state.boss_hp}"
-)
+    if st.button("Validar Nivel 5"):
 
-respuesta = st.text_input(
-    "¿Qué comando lista archivos?"
-)
+        if respuesta.strip() == "Linux Master":
 
-if st.button("Atacar"):
+            st.success("✅ Correcto")
 
-    if respuesta.lower().strip() == "ls":
+            nivel_completado()
 
-        st.session_state.boss_hp -= 25
+            st.rerun()
 
-        st.success("⚔️ Ataque exitoso")
+        else:
 
-    else:
+            perder_vida()
 
-        perder_vida()
+            st.error("❌ Incorrecto")
 
-        st.error("Fallaste")
+# =====================================================
+# FINAL
+# =====================================================
 
-    if st.session_state.boss_hp <= 0:
+elif st.session_state["nivel"] >= 6:
 
-        agregar_logro("🐧 Vencedor del Guardián Linux")
+    st.balloons()
 
-        ganar_nivel()
+    st.success(
+        "🏆 ¡FELICIDADES! Has completado Linux Escape Room"
+    )
 
-        st.rerun()
-```
+    st.write(
+        f"Jugador: {st.session_state['nombre']}"
+    )
 
-# ==================================================
+    st.write(
+        f"Monedas obtenidas: {st.session_state['coins']}"
+    )
 
-# TESORO FINAL
-
-# ==================================================
-
-elif st.session_state.nivel >= 6:
-
-```
-st.balloons()
-
-st.success(
-    "💎 ¡HAS ENCONTRADO EL TESORO LINUX!"
-)
-
-st.markdown("""
-```
-
-# 🏆 Misión Completada
-
-Has demostrado conocimientos de:
-
-* Bash
-* Usuarios
-* Permisos
-* Bucles
-* Comandos Linux
-* Administración básica
-  """)
+    st.write(
+        f"Vidas restantes: {st.session_state['vidas']}"
+    )
