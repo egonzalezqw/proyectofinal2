@@ -1,257 +1,72 @@
 import streamlit as st
 
-# ---------------------------------
-
-# CONFIGURACIÓN
-
-# ---------------------------------
-
+# Configuración de la página
 st.set_page_config(
-page_title="Linux Survival Challenge",
-page_icon="🐧"
+    page_title="Linux Challenge",
+    page_icon="🐧"
 )
 
-# ---------------------------------
-
-# VARIABLES DE SESIÓN
-
-# ---------------------------------
-
+# Variables de sesión
 if "nivel" not in st.session_state:
-st.session_state["nivel"] = 1
+    st.session_state.nivel = 1
 
-if "nombre" not in st.session_state:
-st.session_state["nombre"] = ""
-
-# ---------------------------------
-
-# TÍTULO
-
-# ---------------------------------
-
+# Título
 st.title("🐧 Linux Survival Challenge")
 
-# ---------------------------------
+# Mostrar nivel actual
+st.write(f"Nivel actual: {st.session_state.nivel}")
 
-# LOGIN
+# Nivel 1
+if st.session_state.nivel == 1:
 
-# ---------------------------------
+    st.header("Misión 1")
 
-if st.session_state["nombre"] == "":
+    st.write("""
+    Cree un script llamado bienvenida.sh que muestre:
 
-```
-nombre = st.text_input(
-    "Ingrese su nombre:"
-)
+    Bienvenido al Linux Challenge
+    """)
 
-if st.button("Comenzar"):
+    respuesta = st.text_input(
+        "¿Qué mostró el script?"
+    )
 
-    if nombre.strip() != "":
-        st.session_state["nombre"] = nombre
-        st.rerun()
+    if st.button("Validar"):
 
-st.stop()
-```
+        if respuesta == "Bienvenido al Linux Challenge":
 
-# ---------------------------------
+            st.success("Correcto")
 
-# BIENVENIDA
+            st.session_state.nivel = 2
 
-# ---------------------------------
+            st.rerun()
 
-st.success(
-f"Bienvenido {st.session_state['nombre']}"
-)
+        else:
 
-st.progress(
-st.session_state["nivel"] / 5
-)
+            st.error("Respuesta incorrecta")
 
-# ---------------------------------
+# Nivel 2
+elif st.session_state.nivel == 2:
 
-# NIVEL 1
+    st.header("Misión 2")
 
-# ---------------------------------
+    st.write("""
+    Cree un script que utilice una variable llamada nombre
+    y la muestre utilizando echo.
+    """)
 
-if st.session_state["nivel"] == 1:
+    respuesta = st.text_input(
+        "¿Qué valor mostró?"
+    )
 
-```
-st.header("Nivel 1 - Script Bash")
+    if st.button("Validar Nivel 2"):
 
-st.write("""
-Cree un script llamado bienvenida.sh
+        if respuesta.strip() != "":
 
-El script debe mostrar:
+            st.success("¡Proyecto completado!")
 
-Bienvenido al Linux Challenge
-""")
+            st.balloons()
 
-respuesta = st.text_input(
-    "¿Qué mostró el script?"
-)
+        else:
 
-if st.button("Validar Nivel 1"):
-
-    if respuesta == "Bienvenido al Linux Challenge":
-
-        st.success("Correcto")
-
-        st.session_state["nivel"] = 2
-
-        st.rerun()
-
-    else:
-
-        st.error("Respuesta incorrecta")
-```
-
-# ---------------------------------
-
-# NIVEL 2
-
-# ---------------------------------
-
-elif st.session_state["nivel"] == 2:
-
-```
-st.header("Nivel 2 - Variables")
-
-st.write("""
-Cree un script llamado usuario.sh
-
-Debe crear una variable llamada nombre
-y mostrarla con echo.
-""")
-
-respuesta = st.text_input(
-    "¿Qué valor mostró?"
-)
-
-if st.button("Validar Nivel 2"):
-
-    if respuesta.strip() != "":
-
-        st.success("Correcto")
-
-        st.session_state["nivel"] = 3
-
-        st.rerun()
-
-    else:
-
-        st.error("Ingrese una respuesta")
-```
-
-# ---------------------------------
-
-# NIVEL 3
-
-# ---------------------------------
-
-elif st.session_state["nivel"] == 3:
-
-```
-st.header("Nivel 3 - Permisos")
-
-st.write("""
-Asigne permisos de ejecución
-a bienvenida.sh usando chmod.
-""")
-
-respuesta = st.text_input(
-    "¿Qué permisos tiene el propietario?"
-)
-
-if st.button("Validar Nivel 3"):
-
-    if respuesta.lower() == "rwx":
-
-        st.success("Correcto")
-
-        st.session_state["nivel"] = 4
-
-        st.rerun()
-
-    else:
-
-        st.error("Incorrecto")
-```
-
-# ---------------------------------
-
-# NIVEL 4
-
-# ---------------------------------
-
-elif st.session_state["nivel"] == 4:
-
-```
-st.header("Nivel 4 - IF")
-
-st.write("""
-Cree un script con:
-
-edad=20
-
-Si la edad es mayor a 18
-debe mostrar:
-
-Mayor
-""")
-
-respuesta = st.text_input(
-    "¿Qué mostró el script?"
-)
-
-if st.button("Validar Nivel 4"):
-
-    if respuesta.lower() == "mayor":
-
-        st.success("Correcto")
-
-        st.session_state["nivel"] = 5
-
-        st.rerun()
-
-    else:
-
-        st.error("Incorrecto")
-```
-
-# ---------------------------------
-
-# NIVEL 5
-
-# ---------------------------------
-
-elif st.session_state["nivel"] == 5:
-
-```
-st.header("Nivel 5 - FOR")
-
-st.write("""
-Cree un script que muestre:
-
-1
-2
-3
-""")
-
-respuesta = st.text_input(
-    "¿Cuál fue el último número mostrado?"
-)
-
-if st.button("Finalizar"):
-
-    if respuesta == "3":
-
-        st.balloons()
-
-        st.success(
-            "🏆 Proyecto Final Completado"
-        )
-
-    else:
-
-        st.error("Respuesta incorrecta")
-```
+            st.error("Ingrese una respuesta")
